@@ -43,8 +43,10 @@ export async function POST(req: Request) {
     await sendVerificationEmail(email, token)
 
     return NextResponse.json({ message: "User created successfully. Please check your email to verify." }, { status: 201 })
-  } catch (error) {
+  } catch (error: any) {
     console.error("Signup error:", error)
-    return NextResponse.json({ error: "Something went wrong" }, { status: 500 })
+    const message = error?.message || String(error)
+    const safeMessage = process.env.NODE_ENV === "production" ? "Something went wrong" : message
+    return NextResponse.json({ error: safeMessage }, { status: 500 })
   }
 }
