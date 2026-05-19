@@ -78,19 +78,21 @@ export default function SignupPage() {
   }
 
   return (
-    <AuthLayout title="Create an account" subtitle="Enter your details to get started">
-      {success && (
-        <div className={formStyles.alertSuccess}>
-          Account created successfully! Please check your email to verify your account.
-        </div>
-      )}
-      
-      {errors.server && (
-        <div className={formStyles.alertError}>
-          {errors.server}
-        </div>
-      )}
-
+    <AuthLayout 
+      title="Create an account" 
+      subtitle="Enter your details to get started"
+      alert={
+        success ? (
+          <div className={formStyles.alertSuccess} style={{ textAlign: 'center' }}>
+            Account created successfully! Please check your email to verify your account.
+          </div>
+        ) : errors.server ? (
+          <div className={formStyles.alertError} style={{ textAlign: 'center' }}>
+            {errors.server}
+          </div>
+        ) : null
+      }
+    >
       <form onSubmit={handleSubmit}>
         <div className={formStyles.formGroup}>
           <label htmlFor="email" className={formStyles.label}>Email Address</label>

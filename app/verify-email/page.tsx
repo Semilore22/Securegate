@@ -75,34 +75,34 @@ function VerifyEmailContent() {
     }
   }
 
-  if (status === 'loading') {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
-        <div className={formStyles.spinner} style={{ borderColor: 'var(--primary-color)', borderTopColor: 'transparent' }} />
-        <p>Verifying your email...</p>
-      </div>
-    )
-  }
-
-  if (status === 'success') {
-    return (
-      <div className={formStyles.alertSuccess} style={{ textAlign: 'center' }}>
-        Your email has been successfully verified! Redirecting to login...
-      </div>
-    )
-  }
+  const alertMessage = status === 'success' ? (
+    <div className={formStyles.alertSuccess} style={{ textAlign: 'center' }}>
+      Your email has been successfully verified! Redirecting to login...
+    </div>
+  ) : status === 'error' && errorMessage ? (
+    <div className={formStyles.alertError} style={{ textAlign: 'center' }}>
+      {errorMessage}
+    </div>
+  ) : null
 
   return (
-    <div>
-      <div className={formStyles.alertError}>
-        {errorMessage}
-      </div>
+    <AuthLayout 
+      title="Email Verification" 
+      subtitle="We're verifying your account"
+      alert={alertMessage}
+    >
+      {status === 'loading' && (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem' }}>
+          <div className={formStyles.spinner} style={{ borderColor: 'var(--primary-color)', borderTopColor: 'transparent' }} />
+          <p>Verifying your email...</p>
+        </div>
+      )}
 
-      {errorMessage.includes('expired') || errorMessage.includes('Invalid') ? (
+      {status === 'error' && (errorMessage.includes('expired') || errorMessage.includes('Invalid')) && (
         <div style={{ marginTop: '2rem' }}>
           <h3 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 600 }}>Need a new verification link?</h3>
           {resendSuccess ? (
-            <div className={formStyles.alertSuccess}>
+            <div className={formStyles.alertSuccess} style={{ textAlign: 'center' }}>
               A new verification link has been sent to your email.
             </div>
           ) : (
@@ -123,21 +123,19 @@ function VerifyEmailContent() {
             </form>
           )}
         </div>
-      ) : null}
+      )}
       
       <div className={formStyles.footer}>
         <Link href="/login" className={formStyles.link}>Return to login</Link>
       </div>
-    </div>
+    </AuthLayout>
   )
 }
 
 export default function VerifyEmailPage() {
   return (
-    <AuthLayout title="Email Verification" subtitle="We're verifying your account">
-      <Suspense fallback={<div className={formStyles.spinner} style={{ margin: '0 auto' }} />}>
-        <VerifyEmailContent />
-      </Suspense>
-    </AuthLayout>
+    <Suspense fallback={<div className={formStyles.spinner} style={{ margin: '0 auto' }} />}>
+      <VerifyEmailContent />
+    </Suspense>
   )
 }
