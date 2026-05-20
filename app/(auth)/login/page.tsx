@@ -34,7 +34,13 @@ export default function LoginPage() {
       }
 
       if (res.error) {
-        setError(res.error)
+        const errorMap: Record<string, string> = {
+          CredentialsSignin: 'Email or password is incorrect.',
+          SessionRequired: 'Please sign in to continue.',
+          AccessDenied: 'Access denied. Please check your credentials.',
+        }
+
+        setError(errorMap[res.error] || res.error)
       } else {
         router.push('/dashboard')
         router.refresh()
