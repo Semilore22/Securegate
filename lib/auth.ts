@@ -22,30 +22,41 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials")
         }
 
-        const user = await db.user.findUnique({
-          where: { email: credentials.email },
-        })
+        try {
+          const user = await db.user.findUnique({
+            where: { email: credentials.email },
+          })
 
-        if (!user || !user.password) {
-          throw new Error("User not found")
-        }
+          console.log("NextAuth authorize", {
+            email: credentials.email,
+            userFound: !!user,
+            emailVerified: user?.emailVerified ?? false,
+          })
 
-        if (!user.emailVerified) {
-          throw new Error("Please verify your email to log in")
-        }
+          if (!user || !user.password) {
+            throw new Error("User not found")
+          }
 
-        const isPasswordValid = await bcrypt.compare(
-          credentials.password,
-          user.password
-        )
+          if (!user.emailVerified) {
+            throw new Error("Please verify your email to log in")
+          }
 
-        if (!isPasswordValid) {
-          throw new Error("Invalid credentials")
-        }
+          const isPasswordValid = await bcrypt.compare(
+            credentials.password,
+            user.password
+          )
 
-        return {
-          id: user.id,
-          email: user.email,
+          if (!isPasswordValid) {
+            throw new Error("Invalid credentials")
+          }
+
+          return {
+            id: user.id,
+            email: user.email,
+          }
+        } catch (error) {
+          console.error("NextAuth authorize error:", error)
+          throw error
         }
       },
     }),
@@ -62,6 +73,20 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email
       }
       return token
+    },
+  },
+  debug: process.env.NEXTAUTH_DEBUG === "true",
+  logger: {
+    error(code, metadata) {
+      console.error("NextAuth error", code, metadata)
+    },
+    warn(code) {
+      console.warn("NextAuth warning", code)
+    },
+    debug(code, metadata) {
+      if (process.env.NEXTAUTH_DEBUG === "true") {
+        console.log("NextAuth debug", code, metadata)
+      }
     },
   },
 }
