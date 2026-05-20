@@ -28,7 +28,12 @@ export default function LoginPage() {
         password,
       })
 
-      if (res?.error) {
+      if (!res) {
+        setError('Unable to sign in. Please try again.')
+        return
+      }
+
+      if (res.error) {
         setError(res.error)
       } else {
         router.push('/dashboard')
