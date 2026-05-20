@@ -12,10 +12,10 @@ export default function Home() {
           email verification, and rate-limited forgot password flows.
         </p>
         <div className={styles.actions}>
-          <Link href="/login" className={styles.primaryButton}>
+          <Link href="/auth?mode=login" className={styles.primaryButton}>
             Sign In
           </Link>
-          <Link href="/signup" className={styles.secondaryButton}>
+          <Link href="/auth?mode=signup" className={styles.secondaryButton}>
             Create Account
           </Link>
         </div>

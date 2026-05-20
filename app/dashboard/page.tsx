@@ -11,7 +11,7 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (status === 'unauthenticated') {
-      router.push('/login')
+      router.push('/auth?mode=login')
     }
   }, [status, router])
 
@@ -28,7 +28,7 @@ export default function DashboardPage() {
       <header className={styles.header}>
         <div className={styles.title}>SecureGate Dashboard</div>
         <button 
-          onClick={() => signOut({ callbackUrl: '/login' })} 
+          onClick={() => signOut({ callbackUrl: '/auth?mode=login' })} 
           className={styles.logoutButton}
         >
           Sign out
